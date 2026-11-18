@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/aegis_ratelimit}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:aegis}
+    password: ${DB_PASSWORD:aegis_secret}
+  flyway:
+    enabled: true

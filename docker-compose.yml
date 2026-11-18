@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aegis-postgres
+    environment:
+      POSTGRES_DB: aegis_ratelimit
+      POSTGRES_USER: aegis
+      POSTGRES_PASSWORD: aegis_secret
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis -d aegis_ratelimit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  aegis-rate-limiter:
+    build: .
+    container_name: aegis-rate-limiter
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_URL: jdbc:postgresql://postgres:5432/aegis_ratelimit
+      DB_USERNAME: aegis
+      DB_PASSWORD: aegis_secret
+    ports:
+      - "8080:8080"
